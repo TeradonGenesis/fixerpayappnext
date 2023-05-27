@@ -18,11 +18,13 @@ const App = () => {
     const body = JSON.stringify({ file: base64, model: 'whisper-1' })
     const headers = { 'Content-Type': 'application/json' }
     const { default: axios } = await import('axios')
-    const response = await axios.post('/api/whisper', body, {
+    const response = await axios.post('http://127.0.0.1:5000/api/v1/payagent/whisper', body, {
       headers,
     })
     const { text } = await response.data
     // you must return result from your server in Transcript format
+    const data = await axios.post('http://127.0.0.1:5000/api/v1/payagent/', {query: text})
+    console.log(data)
     return {
       blob,
       text,
