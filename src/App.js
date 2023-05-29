@@ -8,8 +8,11 @@ const App = () => {
    * send it to your own custom server
    * and return the response back to useWhisper
    */
+  document.body.style.backgroundColor = "#8077e7";
+  document.body.style.color = "#eee";
 
   const [transText, setTransTest] = useState('')
+  const [agentMessage, setAgentMessage] = useState('')
 
   const onTranscribe = async (blob) => {
     const base64 = await new Promise(
@@ -28,8 +31,10 @@ const App = () => {
     const { text } = await response.data
     setTransTest(text)
     // you must return result from your server in Transcript format
-    const data = await axios.post('http://127.0.0.1:5000/api/v1/payagent/', {query: text})
-    console.log(data)
+    const payagent = await axios.post('http://127.0.0.1:5000/api/v1/payagent/', {query: text})
+    const { message } = await payagent.data
+    setAgentMessage(message)
+
     return {
       blob,
       text,
@@ -45,41 +50,52 @@ const App = () => {
   })
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <p style={{ fontSize: "24px", color: "#333", marginBottom: "20px" }}>
-        Transcribed Text: {transText}
-      </p>
+    <div style={{ textAlign: "center",  fontWeight: "700"}}>
+      <h1 style={{fontFamily: "Roboto, Arial, sans-serif", fontSize: "52px"}}>FixerPay:<br></br><span style={{color:"#77e7ad"}}>Speak</span> & <span style={{color:"#77e7ad"}}>Get</span></h1>
+      <h2 style={{fontFamily: "Roboto, Arial, sans-serif", fontSize: "20px"}}>Whatever Payment Needs You Have</h2>
       <div>
         <button
+          className="button"
           style={{
-            backgroundColor: "#4CAF50",
-            color: "white",
-            fontFamily: "Open Sans, Helvetica, sans-serif",
-            fontSize: "16px",
+            backgroundColor: "green",
+            fontFamily: "Roboto, Arial, sans-serif",
+            fontSize: "20px",
             padding: "10px 20px",
             border: "none",
             cursor: "pointer",
             marginRight: "10px",
           }}
-          onClick={() => startRecording()}
+          onClick={() => {
+            startRecording()
+            setTransTest('')
+            setAgentMessage('')
+          }}
         >
-          Start
+          <span style={{fontFamily: "Roboto, Arial, sans-serif", fontWeight: "700", color: "#eee"}}>Speak</span>
         </button>
         <button
+          className="button"
           style={{
-            backgroundColor: "#4CAF50",
-            color: "white",
-            fontFamily: "Open Sans, Helvetica, sans-serif",
-            fontSize: "16px",
+            backgroundColor: "red",
+            fontFamily: "Roboto, Arial, sans-serif",
+            fontSize: "20px",
             padding: "10px 20px",
             border: "none",
             cursor: "pointer",
           }}
           onClick={() => stopRecording()}
         >
-          Stop
+          <span style={{fontFamily: "Roboto, Arial, sans-serif", fontWeight: "700", color: "#eee"}}>Stop</span>
         </button>
       </div>
+      <br>
+      </br>
+      <p style={{ fontSize: "20px", marginBottom: "20px", fontFamily: "Roboto, Arial, sans-serif", }}>
+        What you said: {transText}
+      </p>
+      <p style={{ fontSize: "20px", marginBottom: "20px", fontFamily: "Roboto, Arial, sans-serif", }}>
+        What FixerPay said: {agentMessage}
+      </p>
     </div>
   );
   
